@@ -53,6 +53,7 @@ const App = () => {
     setCollapsed(!collapsed);
   };
   return (
+    <div className='bg-[#001529] h-screen w-screen'>
     <div
       style={{
         width: 256,
@@ -75,6 +76,7 @@ const App = () => {
         inlineCollapsed={collapsed}
         items={items}
       />
+    </div>
     </div>
   );
 };

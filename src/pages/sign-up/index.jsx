@@ -15,7 +15,7 @@ export default function SignUpPage() {
     try {
       const response = await auth.sign_up(values);
       if (response.status === 201) {
-        navigate("/");
+          navigate("/");
       } else {
         notification.error({
           message: "Error",

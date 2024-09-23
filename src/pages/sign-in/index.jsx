@@ -2,6 +2,8 @@ import SignInImage from './img/login.jpg'
 import { Button, Form, Input, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
 const { Title } = Typography;
+import { LockOutlined } from "@ant-design/icons";
+
 import { useNavigate } from 'react-router-dom';
 const Index = () => {
     const navigate = useNavigate()
@@ -69,8 +71,8 @@ const Index = () => {
                                     message: 'Please input your password!',
                                 },
                             ]}
-                        >
-                            <Input.Password />
+                        >            
+                        <Input.Password prefix={<LockOutlined />} placeholder="Password" />
                         </Form.Item>
 
                         <Form.Item
