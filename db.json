@@ -1,0 +1,70 @@
+{
+  "students": [
+    {
+      "name": "edit bo'ldi",
+      "age": "121221",
+      "phone": "21122112",
+      "address": "2121221",
+      "group": "Angular JS Standart N13",
+      "teacher": "user",
+      "id": "be1e"
+    },
+    {
+      "id": "a059",
+      "group": "NT-1",
+      "name": "admin",
+      "age": "12",
+      "phone": "1221",
+      "address": "12",
+      "teacher": "asdas"
+    },
+    {
+      "name": "asdasd",
+      "age": "1221",
+      "phone": "12212",
+      "address": "1212122222",
+      "group": "React JS Bootcamp N11",
+      "teacher": "admin",
+      "id": "570b"
+    }
+  ],
+  "teacher": [
+    {
+      "id": "ac69",
+      "course": "Frontend",
+      "name": "admin"
+    }
+  ],
+  "groups": [
+    {
+      "name": "React JS Bootcamp N1133",
+      "course": "Frontend",
+      "id": "11223"
+    },
+    {
+      "id": "e131",
+      "course": "smm",
+      "name": "NT-1"
+    }
+  ],
+  "courses": [
+    {
+      "id": "1234",
+      "name": "Frontend",
+      "duration": "8 months",
+      "price": "$1000"
+    },
+    {
+      "id": "1235",
+      "name": "Backend",
+      "duration": "10 months",
+      "price": "$2000"
+    },
+    {
+      "id": "8269",
+      "name": "tailwindcss",
+      "duration": "8 montch",
+      "price": "10000"
+    }
+  ]
+}
