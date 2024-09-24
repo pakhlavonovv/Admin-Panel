@@ -17,7 +17,7 @@ export default function SignUpPage() {
       const response = await auth.sign_up({...values, phone_number:`998${values.phone_number}`});
       console.log(values, response)
       if (response.status === 201) {
-          navigate("/admin-layout");
+          navigate("/admin-layout/category");
           const access_token = response.data?.data?.tokens?.access_token
           localStorage.setItem("access_token", token)
           console.log(response.data?.data?.tokens?.access_token)

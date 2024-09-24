@@ -16,7 +16,7 @@ const Index = () => {
         if(resp.status == 201){
             const access_token = resp.data?.data?.tokens?.access_token
             localStorage.setItem("access_token", access_token)
-            navigate('/admin-layout')
+            navigate('/admin-layout/category')
         }
     };
     const onFinishFailed = (errorInfo) => {
