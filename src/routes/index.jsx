@@ -8,7 +8,9 @@ import App from "../App";
 import {
    SignIn,
    AdminLayout,
-   SignUp
+   SignUp,
+   Category,
+   SubCategory
 } from "@pages";
 
 const Index = () => {
@@ -17,7 +19,10 @@ const Index = () => {
          <Route path="/" element={<App />}>
             <Route index element={<SignIn/>}/>
             <Route path="sign-up" element={<SignUp/>}/>
-            <Route path="admin-layout" element={<AdminLayout/>}/>
+            <Route path="admin-layout" element={<AdminLayout />}>
+               <Route path="category" element={<Category/>}/>
+               <Route path="sub-category" element={<SubCategory/>}/>
+            </Route>
          </Route>
       )
    );

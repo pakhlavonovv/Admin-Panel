@@ -1,7 +1,7 @@
-import React from "react";
 import { Button, Form, Grid, Input, theme, Typography, notification } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { auth } from "@service";
+import { useNavigate } from "react-router-dom";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -10,12 +10,17 @@ const { Text, Title, Link } = Typography;
 export default function SignUpPage() {
   const { token } = useToken();
   const screens = useBreakpoint();
+  const navigate = useNavigate()
 
   const handleSubmit = async (values) => {
     try {
-      const response = await auth.sign_up(values);
+      const response = await auth.sign_up({...values, phone_number:`998${values.phone_number}`});
+      console.log(values, response)
       if (response.status === 201) {
-          navigate("/");
+          navigate("/admin-layout");
+          const access_token = response.data?.data?.tokens?.access_token
+          localStorage.setItem("access_token", token)
+          console.log(response.data?.data?.tokens?.access_token)
       } else {
         notification.error({
           message: "Error",
@@ -73,18 +78,29 @@ export default function SignUpPage() {
         </div>
         <Form name="normal_signup" onFinish={handleSubmit} layout="vertical" requiredMark="optional">
           <Form.Item
-            name="name"
+            name="first_name"
             rules={[
               {
                 required: true,
-                message: "Please input your Name!",
+                message: "Please input your name!",
               },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Name" />
+            <Input prefix={<UserOutlined />} placeholder="First name" />
           </Form.Item>
           <Form.Item
-            name="phone"
+            name="last_name"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Last name!",
+              },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Last name" />
+          </Form.Item>
+          <Form.Item
+            name="phone_number"
             rules={[
               {
                 required: true,
@@ -97,6 +113,17 @@ export default function SignUpPage() {
             ]}
           >
             <Input addonBefore="+998" maxLength={9} placeholder="Phone number" />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Email address" />
           </Form.Item>
           <Form.Item
             name="password"

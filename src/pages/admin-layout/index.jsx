@@ -1,83 +1,67 @@
 import React, { useState } from 'react';
-import './style.scss'
+import { NavLink, Outlet } from 'react-router-dom';
 import {
-  AppstoreOutlined,
-  ContainerOutlined,
-  DesktopOutlined,
-  MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PieChartOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Button, Menu } from 'antd';
-const items = [
-  {
-    key: '1',
-    icon: <PieChartOutlined />,
-    label: 'Home',
-  },
-  {
-    key: '2',
-    icon: <DesktopOutlined />,
-    label: 'Payments',
-  },
-  {
-    key: '3',
-    icon: <ContainerOutlined />,
-    label: 'Groups',
-  },
-  {
-    key: '4',
-    icon: <MailOutlined />,
-    label: 'My pointers',
-  },
-  {
-    key: '5',
-    icon: <DesktopOutlined />,
-    label: 'Rating',
-  },
-  {
-    key: '5',
-    icon: <ContainerOutlined />,
-    label: 'Shop',
-  },
-  {
-    key: '6',
-    icon: <AppstoreOutlined/>,
-    label: 'Settings'
-  }
-];
+import { Button, Layout, Menu, theme } from 'antd';
+import {admin} from '../../routes/routes'
+const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
   return (
-    <div className='bg-[#001529] h-screen w-screen'>
-    <div
-      style={{
-        width: 256,
-      }}
-    >
-      <Button
-        type="primary"
-        onClick={toggleCollapsed}
-        style={{
-          marginBottom: 16,
-        }}
-      >
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </Button>
-      <Menu
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
-        mode="inline"
-        theme="dark"
-        inlineCollapsed={collapsed}
-        items={items}
-      />
-    </div>
-    </div>
+    <Layout>
+      <Sider trigger={null} collapsible collapsed={collapsed} className='min-h-[100vh]'>
+        <div className="demo-logo-vertical" />
+
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['1']}
+          items={admin.map((item, index) => ({
+            key: index + 1,
+            icon: item.icon,
+            label: <NavLink to={item.path}>{item.content}</NavLink>,
+         }))}
+        />
+      </Sider>
+      <Layout>
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+          }}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: '16px',
+              width: 64,
+              height: 64,
+            }}
+          />
+        </Header>
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Outlet/>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 export default App;

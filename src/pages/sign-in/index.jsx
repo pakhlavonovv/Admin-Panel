@@ -5,17 +5,23 @@ const { Title } = Typography;
 import { LockOutlined } from "@ant-design/icons";
 
 import { useNavigate } from 'react-router-dom';
+import auth from '../../service/auth';
 const Index = () => {
     const navigate = useNavigate()
-    const onFinish = (values) => {
+    const onFinish = async(values) => {
         console.log('Success:', values);
+
+        const resp = await auth.sign_in({...values}, `998${values.phone_number}`)
+        console.log(resp)
+        if(resp.status == 201){
+            const access_token = resp.data?.data?.tokens?.access_token
+            localStorage.setItem("access_token", access_token)
+            navigate('/admin-layout')
+        }
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-    const handleSumbit = async() => {
-        navigate('admin-layout')
-    }
     return (
         <>
             <div className='flex items-center gap-[200px]'>
@@ -43,7 +49,7 @@ const Index = () => {
                         autoComplete="off"
                     >
                         <Form.Item
-  name="phone"
+  name="phone_number"
   rules={[
     {
       required: true,
@@ -77,7 +83,7 @@ const Index = () => {
 
                         <Form.Item
                         >
-                            <Button onClick={handleSumbit} style={{backgroundColor: "#BC8E5B"}} className='w-full h-10 p-3 text-white' htmlType="submit">
+                            <Button style={{backgroundColor: "#BC8E5B"}} className='w-full h-10 p-3 text-white' htmlType="submit">
                                 Login
                             </Button>
                             <div className="flex gap-2 mt-2">
