@@ -18,6 +18,7 @@ const App = () => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} className='min-h-[100vh]'>
+      <h1 className='text-[#ffc04a] text-[30px] font-bold text-center mt-2 mb-2'>TexnoArk</h1>
         <div className="demo-logo-vertical" />
 
         <Menu
