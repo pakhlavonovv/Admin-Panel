@@ -1,5 +1,5 @@
 import { GlobalTable } from "@components"
-import { Space, Tag , Button, Modal, Form, Input } from 'antd';
+import { Space, Tag , Button, Modal, Form, Input, Tooltip } from 'antd';
 import category from "../../service/category";
 import { useEffect, useState } from "react";
 const Index = () => {
@@ -78,7 +78,7 @@ const Index = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button onClick={() => editBook(record)}>Edit</Button>
+                    <Button style={{border: "1px solid blue"}} onClick={() => editBook(record)}>Edit</Button>
                     <Button danger onClick={() => deleteCategory(record.id)}>Delete</Button>
                 </Space>
             ),
@@ -86,7 +86,7 @@ const Index = () => {
       ];    
   return (
     <div>
-        <Button type="primary" onClick={()=>{ setVisible(true); seteditingCategory(null);}}>Add category</Button>
+        <Button type="primary" className="mb-2" onClick={()=>{ setVisible(true); seteditingCategory(null);}}>Add category</Button>
         <GlobalTable columns={columns} data={data} loading={loading} 
         pagination={{
             current: params.page,
@@ -98,7 +98,7 @@ const Index = () => {
         handleChange={handleTableChange}
         />
         <Modal
-                title={editingCategory ? "Edit Book" : "Add Book"}
+                title={editingCategory ? "Edit Category" : "Add Category"}
                 visible={visible}
                 onCancel={() => setVisible(false)}
                 onOk={() => form.submit()}
