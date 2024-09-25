@@ -2,17 +2,24 @@ import { GlobalTable } from "@components"
 import { Space, Tag , Button, Modal, Form, Input } from 'antd';
 import category from "../../service/category";
 import { useEffect, useState } from "react";
-import { getAdapter } from "axios";
 const Index = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
+    const [total, setTotal] = useState()
+    const [params, setParams] = useState({
+        search: "",
+        limit: 2,
+        page: 1
+    })
     const [form] = Form.useForm()
-    const [editingBook, setEditingBook] = useState(null)
+    const [editingCategory, seteditingCategory] = useState(null)
     const getData = async () => {
         setLoading(true)
         try {
-            const res = await category.get()
+            const res = await category.get(params)
+            setData(res?.data?.data?.categories)
+            setTotal(res?.data?.data?.count)
             console.log(res)
         } catch (error) {
             console.log(error)
@@ -21,10 +28,10 @@ const Index = () => {
         }
     }
 
-    const addOrUpdateBook = async(values) => {
+    const addOrUpdateCategory = async(values) => {
         try {
-            if(editingBook){
-                await category.update(editingBook.id, values);
+            if(editingCategory){
+                await category.update(editingCategory.id, values);
             } else{
                 await category.create(values)
             }
@@ -35,7 +42,7 @@ const Index = () => {
             console.log(error)
         }
     }
-    const deleteBook = async (id) => {
+    const deleteCategory = async (id) => {
         try {
             await category.delete(id)
             getData()
@@ -43,29 +50,27 @@ const Index = () => {
             console.log(error)
         }
     }
-    const editBook = (book) => {
-        setEditingBook(book)
-        form.setFieldValue(book)
+    const editBook = (category) => {
+        seteditingCategory(category)
+        form.setFieldValue(category)
         setVisible(true)
     }
     useEffect(()=> {
         getData()
-    }, [])
+    }, [params])
+    const handleTableChange = (pagination) => {
+        const {current, pageSize} = pagination
+        setParams((prev)=> ({
+            ...prev,
+            limit: pageSize,
+            page: current
+        }))
+    }
     const columns = [
         {
-          title: 'Book name',
+          title: 'Category name',
           dataIndex: 'name',
           key: 'name',
-        },
-        {
-            title: 'Book sheet',
-            dataIndex: 'sheet',
-            key: 'sheet'
-        },
-        {
-            title: 'Writer',
-            dataIndex: 'writer',
-            key: 'writer'
         },
         {
             title: 'Actions',
@@ -74,31 +79,37 @@ const Index = () => {
             render: (_, record) => (
                 <Space>
                     <Button onClick={() => editBook(record)}>Edit</Button>
-                    <Button danger onClick={() => deleteBook(record.id)}>Delete</Button>
+                    <Button danger onClick={() => deleteCategory(record.id)}>Delete</Button>
                 </Space>
             ),
         }
       ];    
   return (
     <div>
-        <Button type="primary" onClick={()=>{ setVisible(true); setEditingBook(null);}}>Add category</Button>
-        <GlobalTable columns={columns} data={data} loading={loading}/>
+        <Button type="primary" onClick={()=>{ setVisible(true); seteditingCategory(null);}}>Add category</Button>
+        <GlobalTable columns={columns} data={data} loading={loading} 
+        pagination={{
+            current: params.page,
+            pageSize: params.limit,
+            total: total,
+            showSizeChanger: true,
+            pageSizeOptions: ['2', '5', '7', '10', '12']
+        }}
+        handleChange={handleTableChange}
+        />
         <Modal
-                title={editingBook ? "Edit Book" : "Add Book"}
+                title={editingCategory ? "Edit Book" : "Add Book"}
                 visible={visible}
                 onCancel={() => setVisible(false)}
                 onOk={() => form.submit()}
             >
-                <Form form={form} onFinish={addOrUpdateBook}>
-                    <Form.Item name="name" label="Book Name" rules={[{ required: true }]}>
+                <Form form={form} onFinish={addOrUpdateCategory}>
+                    <Form.Item name="name" label="Category Name" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name="sheet" label="Book Sheet" rules={[{ required: true }]}>
+                    {/* <Form.Item name="sheet" label="Category number" rules={[{ required: true }]}>
                         <Input />
-                    </Form.Item>
-                    <Form.Item name="writer" label="Writer" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal>
     </div>
