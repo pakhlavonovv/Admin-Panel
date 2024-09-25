@@ -1,5 +1,6 @@
 import { GlobalTable } from "@components"
 import { Space, Tag , Button, Modal, Form, Input, Tooltip } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import category from "../../service/category";
 import { useEffect, useState } from "react";
 const Index = () => {
@@ -78,8 +79,8 @@ const Index = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button style={{border: "1px solid blue"}} onClick={() => editBook(record)}>Edit</Button>
-                    <Button danger onClick={() => deleteCategory(record.id)}>Delete</Button>
+                    <Button style={{backgroundColor: "#BC8E5B", color: "white"}} onClick={() => editBook(record)}><EditOutlined /></Button>
+                    <Button style={{backgroundColor:"red", color: "white"}} onClick={() => deleteCategory(record.id)}><DeleteOutlined /></Button>
                 </Space>
             ),
         }
