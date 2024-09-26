@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import { GlobalTable } from "@components"
 import { Space, Tag , Button, Modal, Form, Input, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import category from "../../service/category";
 import { useEffect, useState } from "react";
+
 const Index = () => {
+    const navigate = useNavigate()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
@@ -15,6 +18,7 @@ const Index = () => {
     })
     const [form] = Form.useForm()
     const [editingCategory, seteditingCategory] = useState(null)
+
     const getData = async () => {
         setLoading(true)
         try {
@@ -29,11 +33,11 @@ const Index = () => {
         }
     }
 
-    const addOrUpdateCategory = async(values) => {
+    const addOrUpdateCategory = async (values) => {
         try {
-            if(editingCategory){
+            if (editingCategory) {
                 await category.update(editingCategory.id, values);
-            } else{
+            } else {
                 await category.create(values)
             }
             getData()
@@ -43,6 +47,7 @@ const Index = () => {
             console.log(error)
         }
     }
+
     const deleteCategory = async (id) => {
         try {
             await category.delete(id)
@@ -51,27 +56,35 @@ const Index = () => {
             console.log(error)
         }
     }
+
     const editBook = (category) => {
         seteditingCategory(category)
         form.setFieldValue(category)
         setVisible(true)
     }
-    useEffect(()=> {
+
+    const goToSubCategory = (categoryId) => {
+        navigate(`/sub-category/${categoryId}`);
+    }
+
+    useEffect(() => {
         getData()
     }, [params])
+
     const handleTableChange = (pagination) => {
-        const {current, pageSize} = pagination
-        setParams((prev)=> ({
+        const { current, pageSize } = pagination
+        setParams((prev) => ({
             ...prev,
             limit: pageSize,
             page: current
         }))
     }
+
     const columns = [
         {
-          title: 'Category name',
-          dataIndex: 'name',
-          key: 'name',
+            title: 'Category name',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Actions',
@@ -79,26 +92,28 @@ const Index = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button style={{backgroundColor: "#BC8E5B", color: "white"}} onClick={() => editBook(record)}><EditOutlined /></Button>
-                    <Button style={{backgroundColor:"red", color: "white"}} onClick={() => deleteCategory(record.id)}><DeleteOutlined /></Button>
+                    <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBook(record)}><EditOutlined /></Button>
+                    <Button style={{ backgroundColor: "red", color: "white" }} onClick={() => deleteCategory(record.id)}><DeleteOutlined /></Button>
+                    <Button onClick={() => goToSubCategory(record.id)}><ArrowRightOutlined /></Button>
                 </Space>
             ),
         }
-      ];    
-  return (
-    <div>
-        <Button type="primary" className="mb-2" onClick={()=>{ setVisible(true); seteditingCategory(null);}}>Add category</Button>
-        <GlobalTable columns={columns} data={data} loading={loading} 
-        pagination={{
-            current: params.page,
-            pageSize: params.limit,
-            total: total,
-            showSizeChanger: true,
-            pageSizeOptions: ['2', '5', '7', '10', '12']
-        }}
-        handleChange={handleTableChange}
-        />
-        <Modal
+    ];
+
+    return (
+        <div>
+            <Button type="primary" className="mb-2" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
+            <GlobalTable columns={columns} data={data} loading={loading}
+                pagination={{
+                    current: params.page,
+                    pageSize: params.limit,
+                    total: total,
+                    showSizeChanger: true,
+                    pageSizeOptions: ['2', '5', '7', '10', '12']
+                }}
+                handleChange={handleTableChange}
+            />
+            <Modal
                 title={editingCategory ? "Edit Category" : "Add Category"}
                 visible={visible}
                 onCancel={() => setVisible(false)}
@@ -108,13 +123,10 @@ const Index = () => {
                     <Form.Item name="name" label="Category Name" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    {/* <Form.Item name="sheet" label="Category number" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item> */}
                 </Form>
             </Modal>
-    </div>
-  )
+        </div>
+    )
 }
 
-export default Index
+export default Index;
