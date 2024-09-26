@@ -1,16 +1,17 @@
-import { useNavigate } from 'react-router-dom';
 import { GlobalTable } from "@components"
-import { Space, Tag , Button, Modal, Form, Input, Tooltip } from 'antd';
+import { Space, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import category from "../../service/category";
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Index = () => {
-    const navigate = useNavigate()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
     const [total, setTotal] = useState()
+    const { search } = useLocation()
+    const navigate = useNavigate()
     const [params, setParams] = useState({
         search: "",
         limit: 2,
@@ -51,6 +52,7 @@ const Index = () => {
     const deleteCategory = async (id) => {
         try {
             await category.delete(id)
+            message.success('Category successfully deleted!');
             getData()
         } catch (error) {
             console.log(error)
@@ -64,21 +66,43 @@ const Index = () => {
     }
 
     const goToSubCategory = (categoryId) => {
-        navigate(`/sub-category/${categoryId}`);
+        navigate(`/admin-layout/sub-category/${categoryId}`);
     }
 
     useEffect(() => {
         getData()
     }, [params])
-
+    useEffect(() => {
+        const params = new URLSearchParams(search)
+        let page = Number(params.get("page")) || 1
+        let limit = Number(params.get("limit")) || 3
+        setParams((prev) => ({
+            ...prev,
+            page: page,
+            limit: limit
+        }))
+    }, [search])
     const handleTableChange = (pagination) => {
         const { current, pageSize } = pagination
         setParams((prev) => ({
             ...prev,
             limit: pageSize,
             page: current
-        }))
+        }));
+        const searchParams = new URLSearchParams(location.search)
+        searchParams.set("page", `${current}`)
+        searchParams.set("limit", `${pageSize}`)
+        navigate(`?${searchParams}}`)
     }
+
+    const confirm = (id) => {
+        deleteCategory(id)
+        console.log(id)
+    };
+    const cancel = (e) => {
+        console.log(e);
+        message.error('Category is not deleted');
+    };
 
     const columns = [
         {
@@ -93,7 +117,17 @@ const Index = () => {
             render: (_, record) => (
                 <Space>
                     <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBook(record)}><EditOutlined /></Button>
-                    <Button style={{ backgroundColor: "red", color: "white" }} onClick={() => deleteCategory(record.id)}><DeleteOutlined /></Button>
+                    <Popconfirm
+                        title="Delete the task"
+                        description="Are you sure to delete this task?"
+                        onConfirm={() => confirm(record.id)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button danger><DeleteOutlined/></Button>
+
+                    </Popconfirm>
                     <Button onClick={() => goToSubCategory(record.id)}><ArrowRightOutlined /></Button>
                 </Space>
             ),

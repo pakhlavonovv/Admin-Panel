@@ -21,9 +21,9 @@ const Index = () => {
             <Route path="sign-up" element={<SignUp/>}/>
             <Route path="admin-layout" element={<AdminLayout />}>
                <Route path="category" element={<Category/>}/>
-               <Route path="sub-category" element={<SubCategory/>}/>
+               <Route path="sub-category/:categoryId" element={<SubCategory/>}/>
             </Route>
-         </Route>
+         </Route> 
       )
    );
 
