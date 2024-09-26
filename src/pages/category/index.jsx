@@ -1,4 +1,4 @@
-import { GlobalTable } from "@components"
+import { GlobalTable, GlobalDelete } from "@components"
 import { Space, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import category from "../../service/category";
@@ -94,16 +94,6 @@ const Index = () => {
         searchParams.set("limit", `${pageSize}`)
         navigate(`?${searchParams}}`)
     }
-
-    const confirm = (id) => {
-        deleteCategory(id)
-        console.log(id)
-    };
-    const cancel = (e) => {
-        console.log(e);
-        message.error('Category is not deleted');
-    };
-
     const columns = [
         {
             title: 'Category name',
@@ -117,17 +107,7 @@ const Index = () => {
             render: (_, record) => (
                 <Space>
                     <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBook(record)}><EditOutlined /></Button>
-                    <Popconfirm
-                        title="Delete the task"
-                        description="Are you sure to delete this task?"
-                        onConfirm={() => confirm(record.id)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger><DeleteOutlined/></Button>
-
-                    </Popconfirm>
+                    <GlobalDelete id={record.id} handleDelete={deleteCategory} />
                     <Button onClick={() => goToSubCategory(record.id)}><ArrowRightOutlined /></Button>
                 </Space>
             ),

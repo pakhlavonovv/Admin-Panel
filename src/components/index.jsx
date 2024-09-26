@@ -1,2 +1,3 @@
 import GlobalTable from "./global-table";
-export { GlobalTable }
+import GlobalDelete from './global-delete'
+export { GlobalTable, GlobalDelete }
