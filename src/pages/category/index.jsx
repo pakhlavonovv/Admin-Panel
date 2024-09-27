@@ -33,7 +33,6 @@ const Index = () => {
             setLoading(false)
         }
     }
-
     const addOrUpdateCategory = async (values) => {
         try {
             if (editingCategory) {

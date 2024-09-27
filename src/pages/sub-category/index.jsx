@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Space, Button, Modal, Form, Input } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Space, Button, Modal, Form, Input, message } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import subCategoryService from "../../service/sub-category";
-import { useParams } from "react-router-dom";
-import { GlobalTable } from "@components"
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { GlobalTable, GlobalDelete } from "@components";
 
 const SubCategory = () => {
     const { categoryId } = useParams();
@@ -12,25 +12,38 @@ const SubCategory = () => {
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm();
     const [editingSubCategory, setEditingSubCategory] = useState(null);
+    const [total, setTotal] = useState();
+    const { search } = useLocation();
+    const navigate = useNavigate();
+    const [params, setParams] = useState({
+        limit: 5,
+        page: 1,
+    });
 
     const getData = async () => {
         setLoading(true);
         try {
-            const res = await subCategoryService.getByCategoryId(categoryId); 
-            setData(res?.data?.data?.subCategories);
+            const res = await subCategoryService.get(categoryId, params);
+            console.log(res)
+            setData(res?.data?.data?.subcategories);
+            console.log(res?.data?.data?.subcategories)
+            setTotal(res?.data?.data?.count);
         } catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const addOrUpdateSubCategory = async (values) => {
         try {
             if (editingSubCategory) {
                 await subCategoryService.update(editingSubCategory.id, values);
             } else {
-                await subCategoryService.create({ ...values, categoryId }); 
+                await subCategoryService.create({
+                    name: values.name,
+                    parent_category_id: Number(categoryId)
+                });
             }
             getData();
             setVisible(false);
@@ -38,26 +51,51 @@ const SubCategory = () => {
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const deleteSubCategory = async (id) => {
         try {
             await subCategoryService.delete(id);
+            message.success('Sub-category successfully deleted!');
             getData();
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const editSubCategory = (subCategory) => {
         setEditingSubCategory(subCategory);
         form.setFieldsValue(subCategory);
         setVisible(true);
-    }
+    };
 
     useEffect(() => {
         getData();
-    }, [categoryId]);
+    }, [params, categoryId]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(search);
+        let page = Number(params.get("page")) || 1;
+        let limit = Number(params.get("limit")) || 5;
+        setParams((prev) => ({
+            ...prev,
+            page: page,
+            limit: limit,
+        }));
+    }, [search]);
+
+    const handleTableChange = (pagination) => {
+        const { current, pageSize } = pagination;
+        setParams((prev) => ({
+            ...prev,
+            limit: pageSize,
+            page: current,
+        }));
+        const searchParams = new URLSearchParams(search);
+        searchParams.set("page", `${current}`);
+        searchParams.set("limit", `${pageSize}`);
+        navigate(`?${searchParams}`);
+    };
 
     const columns = [
         {
@@ -72,7 +110,7 @@ const SubCategory = () => {
             render: (_, record) => (
                 <Space>
                     <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editSubCategory(record)}><EditOutlined /></Button>
-                    <Button style={{ backgroundColor: "red", color: "white" }} onClick={() => deleteSubCategory(record.id)}><DeleteOutlined /></Button>
+                    <GlobalDelete id={record.id} handleDelete={deleteSubCategory} />
                 </Space>
             ),
         }
@@ -81,7 +119,19 @@ const SubCategory = () => {
     return (
         <div>
             <Button type="primary" className="mb-2" onClick={() => { setVisible(true); setEditingSubCategory(null); }}>Add sub-category</Button>
-            <GlobalTable columns={columns} data={data} loading={loading} />
+            <GlobalTable 
+                columns={columns} 
+                data={data} 
+                loading={loading}
+                pagination={{
+                    current: params.page,
+                    pageSize: params.limit,
+                    total: total,
+                    showSizeChanger: true,
+                    pageSizeOptions: ['5', '10', '20', '50']
+                }}
+                handleChange={handleTableChange}
+            />
             <Modal
                 title={editingSubCategory ? "Edit Sub-category" : "Add Sub-category"}
                 visible={visible}
@@ -96,6 +146,6 @@ const SubCategory = () => {
             </Modal>
         </div>
     );
-}
+};
 
 export default SubCategory;
