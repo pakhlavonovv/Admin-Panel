@@ -126,7 +126,7 @@ const Index = () => {
         <div>
             <div className="flex gap-2 items-center mb-2">
             <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
-            <Input onChange={handleInputChange} className="w-[300px]" placeholder="Search..."/>
+            <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..."/>
             </div>
             <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{

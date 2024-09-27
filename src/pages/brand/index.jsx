@@ -1,7 +1,8 @@
 import { GlobalTable, GlobalDelete } from "@components"
 import { Space, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons'
-import brand from "../../service/category";
+import brand from "../../service/brand";
+import category  from "../../service/category";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -9,14 +10,20 @@ const Index = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
-    const [total, setTotal] = useState()
+    const [total, setTotal] = useState() 
+    const [file, setFile] = useState({})
     const { search } = useLocation()
     const navigate = useNavigate()
     const [params, setParams] = useState({
         search: "",
         limit: 2,
         page: 1
-    })
+    });
+    const handleChange = (e) => {
+        // console.log(e.target.files[0])
+        setFile(e.target.files[0])
+    }
+
     const [form] = Form.useForm()
     const [editingCategory, seteditingCategory] = useState(null)
 
@@ -34,18 +41,25 @@ const Index = () => {
         }
     }
     const addOrUpdateCategory = async (values) => {
-        try {
-            if (editingCategory) {
-                await brand.update(editingCategory.id, values);
-            } else {
-                await brand.create(values)
-            }
-            getData()
-            setVisible(false)
-            form.resetFields()
-        } catch (error) {
-            console.log(error)
-        }
+        console.log(values)
+        // let form = new FormData()
+        // form.append("file", values.file)
+        // form.append("name", values.name)
+        // form.append("category_id", values.category_id)
+        // form.append("description",  values.description)
+        // console.log(file)
+        // try {
+        //     if (editingCategory) {
+        //         await brand.update(editingCategory.id, values);
+        //     } else {
+        //         await brand.create(form)
+        //     }
+        //     getData()
+        //     setVisible(false)
+        //     form.resetFields()
+        // } catch (error) {
+        //     console.log(error)
+        // }
     }
 
     const deleteCategory = async (id) => {
@@ -127,7 +141,7 @@ const Index = () => {
 
     return (
         <div>
-            <Button type="primary" className="mb-2" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
+            <Button type="primary" className="mb-2" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add brand</Button>
             <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{
                     current: params.page,
@@ -145,8 +159,17 @@ const Index = () => {
                 onOk={() => form.submit()}
             >
                 <Form form={form} onFinish={addOrUpdateCategory}>
-                    <Form.Item name="name" label="Category Name" rules={[{ required: true }]}>
+                    <Form.Item name="name" label="Brand Name" rules={[{ required: true }]}>
                         <Input />
+                    </Form.Item>
+                    <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="category_id" label="Category id" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="file" label="File" rules={[{ required: true }]}>
+                        <Input type="file" onChange={handleChange}/>
                     </Form.Item>
                 </Form>
             </Modal>

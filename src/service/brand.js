@@ -6,4 +6,4 @@ const brand = {
    delete: (id) => https.delete(`/brand/delete/${id}`),
 };
 
-export default category;
+export default brand;
