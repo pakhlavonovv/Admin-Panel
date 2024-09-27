@@ -5,8 +5,8 @@ const admin = [
       path: "/admin-layout/category",
    },
    {
-       content: 'Sub Category',
-      path: '/admin-layout/sub-category',
+       content: 'Brand',
+      path: '/admin-layout/brand',
    }
 ];
 

@@ -96,6 +96,15 @@ const SubCategory = () => {
         searchParams.set("limit", `${pageSize}`);
         navigate(`?${searchParams}`);
     };
+    const handleInputChange = (event) => {
+        setParams((prev)=> ({
+            ...prev,
+            search: event.target.value
+        }))
+        const search_params = new URLSearchParams(search)
+        search_params.set("search", event.target.value)
+        navigate(`?${search_params}`)
+    }
 
     const columns = [
         {
@@ -118,10 +127,12 @@ const SubCategory = () => {
 
     return (
         <div>
-            <Button type="primary" className="mb-2" onClick={() => { setVisible(true); setEditingSubCategory(null); }}>Add sub-category</Button>
-            <GlobalTable 
-                columns={columns} 
-                data={data} 
+            <div className="flex gap-2 items-center mb-2">
+                <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
+                <Input onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
+            </div>            <GlobalTable
+                columns={columns}
+                data={data}
                 loading={loading}
                 pagination={{
                     current: params.page,
