@@ -2,7 +2,6 @@ import { GlobalTable, GlobalDelete } from "@components"
 import { Space, Upload, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined, UploadOutlined } from '@ant-design/icons'
 import brand from "../../service/brand";
-import category from "../../service/category";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -41,26 +40,30 @@ const Index = () => {
         }
     }
     const addOrUpdateCategory = async (values) => {
-        console.log(values)
-        let form = new FormData()
-        form.append("file", values.file)
-        form.append("name", values.name)
-        form.append("category_id", values.category_id)
-        form.append("description", values.description)
-        console.log(file)
+        let form = new FormData();
+        console.log(values);
+        if (file) {
+            form.append("file", file); 
+        }
+        form.append("name", values.name);
+        form.append("category_id", values.category_id);
+        form.append("description", values.description);
+    
         try {
             if (editingCategory) {
-                await brand.update(editingCategory.id, values);
+                await brand.update(editingCategory.id, values); // Noto'g'ri yerda 'values' ishlatilishi mumkin
             } else {
-                await brand.create(form)
+                await brand.create(form); // Formdan foydalaning, values emas
             }
-            getData()
-            setVisible(false)
-            form.resetFields()
+            await getData(); // Ma'lumotlarni interfeysda yangilash
+            setVisible(false);
+            form.resetFields();
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
+    
+    
 
     const deleteCategory = async (id) => {
         try {
@@ -76,10 +79,6 @@ const Index = () => {
         seteditingCategory(category)
         form.setFieldValue(category)
         setVisible(true)
-    }
-
-    const goToSubCategory = (categoryId) => {
-        navigate(`/admin-layout/sub-category/${categoryId}`);
     }
 
     useEffect(() => {
@@ -108,7 +107,7 @@ const Index = () => {
         navigate(`?${searchParams}}`)
     }
     const handleInputChange = (event) => {
-        setParams((prev)=> ({
+        setParams((prev) => ({
             ...prev,
             search: event.target.value
         }))
@@ -142,7 +141,6 @@ const Index = () => {
                 <Space>
                     <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBook(record)}><EditOutlined /></Button>
                     <GlobalDelete id={record.id} handleDelete={deleteCategory} />
-                    <Button onClick={() => goToSubCategory(record.id)}><ArrowRightOutlined /></Button>
                 </Space>
             ),
         }
@@ -150,9 +148,9 @@ const Index = () => {
 
     return (
         <div>
-<div className="flex gap-2 items-center mb-2">
-            <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add brand</Button>
-            <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..."/>
+            <div className="flex gap-2 items-center mb-2">
+                <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add brand</Button>
+                <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
             </div>            <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{
                     current: params.page,
@@ -179,9 +177,15 @@ const Index = () => {
                     <Form.Item name="category_id" label="Category id" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Upload name="file">
-                        <Button onChange={handleChange} icon={<UploadOutlined />}>Click to Upload</Button>
+                    <Upload
+                        beforeUpload={(file) => {
+                            setFile(file);
+                            return false; 
+                        }}
+                    >
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
                     </Upload>
+
                 </Form>
             </Modal>
         </div>
