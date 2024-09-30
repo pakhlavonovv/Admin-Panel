@@ -31,7 +31,7 @@ const Index = () => {
         setLoading(true)
         try {
             const res = await brand.get(params)
-            setData(res?.data?.data?.categories)
+            setData(res?.data?.data?.brands)
             setTotal(res?.data?.data?.count)
             console.log(res)
         } catch (error) {

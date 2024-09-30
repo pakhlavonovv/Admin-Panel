@@ -20,7 +20,6 @@ const App = () => {
       <Sider trigger={null} collapsible collapsed={collapsed} className='min-h-[100vh]'>
       <h1 className='text-[#ffc04a] text-[30px] font-bold text-center mt-2 mb-2'>TexnoArk</h1>
         <div className="demo-logo-vertical" />
-
         <Menu
           theme="dark"
           mode="inline"
@@ -33,6 +32,7 @@ const App = () => {
         />
       </Sider>
       <Layout>
+        <div className='flex items-center justify-between container'>
         <Header
           style={{
             padding: 0,
@@ -50,6 +50,7 @@ const App = () => {
             }}
           />
         </Header>
+        </div>
         <Content
           style={{
             margin: '24px 16px',
@@ -62,7 +63,7 @@ const App = () => {
           <Outlet/>
         </Content>
       </Layout>
-    </Layout>
+      </Layout>
   );
 };
 export default App;
