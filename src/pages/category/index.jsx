@@ -127,15 +127,19 @@ const Index = () => {
 
     return (
         <div>
-            <div className="flex gap-2 items-center mb-2">
+            <div className="flex justify-between items-center mb-2">
+            <div className="flex gap-2 items-center">
                 <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
                 <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
-                <select className="border-2 rounded-md p-1" onChange={(evt) => {
+            </div>
+            <div>
+            <select className="border-2 rounded-md p-1" onChange={(evt) => {
                     setLang(evt.target.value)
                 }}>
                     <option value="eng">EN</option>
                     <option value="uz">UZ</option>
                 </select>
+            </div>
             </div>
             <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{

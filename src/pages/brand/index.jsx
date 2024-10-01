@@ -18,18 +18,14 @@ const Index = () => {
         limit: 2,
         page: 1
     });
-    const handleChange = (e) => {
-        // console.log(e.target.files[0])
-        setFile(e.target.files[0])
-    }
-
     const [form] = Form.useForm()
-    const [editingCategory, seteditingCategory] = useState(null)
-
+    const [editingBrand, setEditingBrand] = useState({})
+    console.log(editingBrand)
     const getData = async () => {
         setLoading(true)
         try {
             const res = await brand.get(params)
+            console.log(res)
             setData(res?.data?.data?.brands)
             setTotal(res?.data?.data?.count)
             console.log(res)
@@ -39,48 +35,47 @@ const Index = () => {
             setLoading(false)
         }
     }
-    const addOrUpdateCategory = async (values) => {
+    const addOrUpdateBrand = async (values) => {
         let form = new FormData();
         console.log(values);
+
         if (file) {
-            form.append("file", file); 
+            form.append("file", file);
         }
         form.append("name", values.name);
         form.append("category_id", values.category_id);
         form.append("description", values.description);
-    
+
         try {
-            if (editingCategory) {
-                await brand.update(editingCategory.id, values); // Noto'g'ri yerda 'values' ishlatilishi mumkin
+            if (editingBrand) {
+                await brand.update(editingBrand.id, values);
             } else {
-                await brand.create(form); // Formdan foydalaning, values emas
+                await brand.create(form);
             }
-            await getData(); // Ma'lumotlarni interfeysda yangilash
-            setVisible(false);
-            form.resetFields();
+            getData();
+            handleClose();
         } catch (error) {
             console.log(error);
         }
     };
-    
-    
 
-    const deleteCategory = async (id) => {
+    const deleteBrand = async (id) => {
         try {
             await brand.delete(id)
-            message.success('Category successfully deleted!');
+            message.success('Brand successfully deleted!');
             getData()
         } catch (error) {
             console.log(error)
         }
     }
-
-    const editBook = (category) => {
-        seteditingCategory(category)
-        form.setFieldValue(category)
+    const editBrand = (brand) => {
+        setEditingBrand(brand)
         setVisible(true)
     }
-
+    const handleClose = () => {
+        setVisible(false)
+        form.resetFields()
+    }
     useEffect(() => {
         getData()
     }, [params])
@@ -94,6 +89,17 @@ const Index = () => {
             limit: limit
         }))
     }, [search])
+    useEffect(() => {
+        if (editingBrand) {
+            form.setFieldsValue({
+                name: editingBrand.name,
+                category_id: editingBrand.category_id,
+                description: editingBrand.description
+            })
+        } else {
+            form.resetFields();
+        }
+    }, [editingBrand, form])
     const handleTableChange = (pagination) => {
         const { current, pageSize } = pagination
         setParams((prev) => ({
@@ -139,8 +145,8 @@ const Index = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBook(record)}><EditOutlined /></Button>
-                    <GlobalDelete id={record.id} handleDelete={deleteCategory} />
+                    <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBrand(record)}><EditOutlined /></Button>
+                    <GlobalDelete id={record.id} handleDelete={deleteBrand} />
                 </Space>
             ),
         }
@@ -149,7 +155,7 @@ const Index = () => {
     return (
         <div>
             <div className="flex gap-2 items-center mb-2">
-                <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add brand</Button>
+                <Button type="primary" onClick={() => { setVisible(true); setEditingBrand(null); }}>Add brand</Button>
                 <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
             </div>            <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{
@@ -162,12 +168,12 @@ const Index = () => {
                 handleChange={handleTableChange}
             />
             <Modal
-                title={editingCategory ? "Edit Category" : "Add Category"}
+                title={editingBrand ? "Edit Brand" : "Add Brand"}
                 visible={visible}
-                onCancel={() => setVisible(false)}
+                onCancel={handleClose}
                 onOk={() => form.submit()}
             >
-                <Form form={form} onFinish={addOrUpdateCategory}>
+                <Form form={form} onFinish={addOrUpdateBrand}>
                     <Form.Item name="name" label="Brand Name" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
@@ -178,9 +184,10 @@ const Index = () => {
                         <Input />
                     </Form.Item>
                     <Upload
+                        name="file"
                         beforeUpload={(file) => {
                             setFile(file);
-                            return false; 
+                            return false;
                         }}
                     >
                         <Button icon={<UploadOutlined />}>Click to Upload</Button>

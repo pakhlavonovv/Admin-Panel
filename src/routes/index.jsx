@@ -11,7 +11,8 @@ import {
    SignUp,
    Category,
    SubCategory,
-   Brand
+   Brand,
+   BrandCategory
 } from "@pages";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
                <Route path="category" element={<Category/>}/>
                <Route path="sub-category/:categoryId" element={<SubCategory/>}/>
                <Route path="brand" element={<Brand/>}/>
+               <Route path="brand-category" element={<BrandCategory/>}/>
             </Route>
          </Route> 
       )

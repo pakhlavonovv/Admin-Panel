@@ -4,4 +4,5 @@ import SignUp from './sign-up'
 import Category from './category'
 import SubCategory from './sub-category'
 import Brand from './brand'
-export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand }
+import BrandCategory from './brand-category'
+export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand, BrandCategory }

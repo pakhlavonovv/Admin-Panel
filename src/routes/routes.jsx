@@ -5,20 +5,13 @@ const admin = [
       path: "/admin-layout/category",
    },
    {
-       content: 'Brand',
+      content: 'Brand',
       path: '/admin-layout/brand',
+   },
+   {
+      content: 'Brand Category',
+      path: '/admin-layout/brand-category'
    }
 ];
 
-const student = [
-   {
-      content: "Group",
-      path: "/student-layout",
-   },
-   {
-      content: "Result",
-      path: "/student-layout/result",
-   },
-];
-
-export { admin, student };
+export { admin };
