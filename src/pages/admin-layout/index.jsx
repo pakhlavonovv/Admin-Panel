@@ -38,7 +38,7 @@ const App = () => {
             padding: 0,
             background: colorBgContainer,
           }}
-        >
+          >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -48,7 +48,7 @@ const App = () => {
               width: 64,
               height: 64,
             }}
-          />
+            />
         </Header>
         </div>
         <Content
@@ -59,7 +59,7 @@ const App = () => {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
-        >
+          >
           <Outlet/>
         </Content>
       </Layout>

@@ -2,13 +2,16 @@ import { GlobalTable, GlobalDelete } from "@components"
 import { Space, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import category from "../../service/category";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
+import { LangContext } from "../../context";
+import LangData from "../../lang/lang.json"
 
 const Index = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
+    const {lang, setLang} = useContext(LangContext)
     const [total, setTotal] = useState()
     const { search } = useLocation()
     const navigate = useNavigate()
@@ -94,7 +97,7 @@ const Index = () => {
         navigate(`?${searchParams}}`)
     }
     const handleInputChange = (event) => {
-        setParams((prev)=> ({
+        setParams((prev) => ({
             ...prev,
             search: event.target.value
         }))
@@ -104,12 +107,12 @@ const Index = () => {
     }
     const columns = [
         {
-            title: 'Category name',
+            title: LangData[lang].category_table.name,
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Actions',
+            title: LangData[lang].category_table.actions,
             dataIndex: 'actions',
             key: 'actions',
             render: (_, record) => (
@@ -125,8 +128,14 @@ const Index = () => {
     return (
         <div>
             <div className="flex gap-2 items-center mb-2">
-            <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
-            <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..."/>
+                <Button type="primary" onClick={() => { setVisible(true); seteditingCategory(null); }}>Add category</Button>
+                <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
+                <select className="border-2 rounded-md p-1" onChange={(evt) => {
+                    setLang(evt.target.value)
+                }}>
+                    <option value="eng">EN</option>
+                    <option value="uz">UZ</option>
+                </select>
             </div>
             <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{

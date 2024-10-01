@@ -1,0 +1,14 @@
+{
+    "uz": {
+        "category_table": {
+            "name": "Kategorya nomi",
+            "actions": "Xarakatlar"
+        }
+    },
+    "eng": {
+        "category_table": {
+            "name": "Category name",
+            "actions": "Actions"
+        }
+    }
+}
