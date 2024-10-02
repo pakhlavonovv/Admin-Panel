@@ -173,7 +173,6 @@ const Index = () => {
                             ))}
                         </Select>
                     </Form.Item>
-
                     <Form.Item name="name" label="Brand Category name">
                         <Input />
                     </Form.Item>
