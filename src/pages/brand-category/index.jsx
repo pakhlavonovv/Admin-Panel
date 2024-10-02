@@ -1,47 +1,64 @@
-import { GlobalTable, GlobalDelete } from "@components"
-import { Space, Upload, Tag, Button, Modal, Form, Input, Tooltip, message, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined, ArrowRightOutlined, UploadOutlined } from '@ant-design/icons'
-import brand from "../../service/brand";
+import { GlobalTable, GlobalDelete } from "@components";
+import { Space, Upload, Button, Modal, Form, Input, Select, message } from 'antd';
+import { EditOutlined, UploadOutlined } from '@ant-design/icons';
+import brandCategory from "../../service/brand-category";
+import brandService from "../../service/brand"; // Brandlarni olish uchun import qilamiz
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Index = () => {
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [visible, setVisible] = useState(false)
-    const [total, setTotal] = useState()
-    const [file, setFile] = useState({})
-    const { search } = useLocation()
-    const navigate = useNavigate()
+const BrandCategory = () => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [total, setTotal] = useState();
+    const [file, setFile] = useState({});
+    const [brands, setBrands] = useState([]); // Brandlar ro'yxatini saqlash uchun state
+    const { search } = useLocation();
+    const navigate = useNavigate();
     const [params, setParams] = useState({
         search: "",
         limit: 2,
         page: 1
     });
-    const [form] = Form.useForm()
-    const [editingBrand, setEditingBrand] = useState({})
-    console.log(editingBrand)
+    const [form] = Form.useForm();
+    const [editingBrandCategory, setEditingBrandCategory] = useState(null);
+
     const getData = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const res = await brand.get(params)
-            console.log(res)
-            setData(res?.data?.data?.brands)
-            setTotal(res?.data?.data?.count)
-            console.log(res)
+            const res = await brandCategory.get(params);
+            setData(res?.data?.data?.brandCategories);
+            setTotal(res?.data?.data?.count);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
-    const addOrUpdateBrand = async (values) => {
-        console.log(values);
+    };
+
+    const getBrands = async () => {
         try {
-            if (editingBrand) {
-                await brand.update(editingBrand.id, values);
+            const res = await brandService.get({ limit: 100, page: 1 }); // Brandlarni olish
+            setBrands(res?.data?.data?.brands || []); // Brandlar ro'yxatini saqlaymiz
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const addOrUpdateBrandCategory = async (values) => {
+        let formData = new FormData();
+        if (file) {
+            formData.append("file", file);
+        }
+        formData.append("brand_id", values.brand_id);
+        formData.append("category_id", values.category_id);
+        formData.append("description", values.description);
+
+        try {
+            if (editingBrandCategory) {
+                await brandCategory.update(editingBrandCategory.id, formData);
             } else {
-                await brand.create(values);
+                await brandCategory.create(formData);
             }
             getData();
             handleClose();
@@ -50,82 +67,84 @@ const Index = () => {
         }
     };
 
-    const deleteBrand = async (id) => {
+    const deleteBrandCategory = async (id) => {
         try {
-            await brand.delete(id)
+            await brandCategory.delete(id);
             message.success('Brand Category successfully deleted!');
-            getData()
+            getData();
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
-    const editBrand = (brand) => {
-        setEditingBrand(brand)
-        setVisible(true)
-    }
+    };
+
+    const editBrandCategory = (brandCategory) => {
+        setEditingBrandCategory(brandCategory);
+        setVisible(true);
+    };
+
     const handleClose = () => {
-        setVisible(false)
-        form.resetFields()
-    }
+        setVisible(false);
+        form.resetFields();
+    };
+
     useEffect(() => {
-        getData()
-    }, [params])
+        getData();
+        getBrands(); // Brandlarni yuklaymiz
+    }, [params]);
+
     useEffect(() => {
-        const params = new URLSearchParams(search)
-        let page = Number(params.get("page")) || 1
-        let limit = Number(params.get("limit")) || 3
-        setParams((prev) => ({
-            ...prev,
-            page: page,
-            limit: limit
-        }))
-    }, [search])
-    useEffect(() => {
-        if (editingBrand) {
+        if (editingBrandCategory) {
             form.setFieldsValue({
-                name: editingBrand.name,
-                category_id: editingBrand.category_id,
-                description: editingBrand.description
-            })
+                brand_id: editingBrandCategory.brand_id,
+                category_id: editingBrandCategory.category_id,
+                description: editingBrandCategory.description
+            });
         } else {
             form.resetFields();
         }
-    }, [editingBrand, form])
+    }, [editingBrandCategory, form]);
+
     const handleTableChange = (pagination) => {
-        const { current, pageSize } = pagination
+        const { current, pageSize } = pagination;
         setParams((prev) => ({
             ...prev,
             limit: pageSize,
             page: current
         }));
-        const searchParams = new URLSearchParams(location.search)
-        searchParams.set("page", `${current}`)
-        searchParams.set("limit", `${pageSize}`)
-        navigate(`?${searchParams}}`)
-    }
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set("page", `${current}`);
+        searchParams.set("limit", `${pageSize}`);
+        navigate(`?${searchParams}`);
+    };
+
     const handleInputChange = (event) => {
         setParams((prev) => ({
             ...prev,
             search: event.target.value
-        }))
-        const search_params = new URLSearchParams(search)
-        search_params.get("search", event.target.value)
-        navigate(`?${search_params}`)
-    }
+        }));
+        const search_params = new URLSearchParams(search);
+        search_params.get("search", event.target.value);
+        navigate(`?${search_params}`);
+    };
+
     const columns = [
         {
-            title: 'Brand name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Brand ID',
+            dataIndex: 'brand_id',
+            key: 'brand_id',
+        },
+        {
+            title: 'Brand category  name',
+            dataIndex: 'brand_category_name',
+            key: 'brand_category_name',
         },
         {
             title: 'Actions',
-            dataIndex: 'actions',
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBrand(record)}><EditOutlined /></Button>
-                    <GlobalDelete id={record.id} handleDelete={deleteBrand} />
+                    <Button style={{ backgroundColor: "#BC8E5B", color: "white" }} onClick={() => editBrandCategory(record)}><EditOutlined /></Button>
+                    <GlobalDelete id={record.id} handleDelete={deleteBrandCategory} />
                 </Space>
             ),
         }
@@ -134,9 +153,10 @@ const Index = () => {
     return (
         <div>
             <div className="flex gap-2 items-center mb-2">
-                <Button type="primary" onClick={() => { setVisible(true); setEditingBrand(null); }}>Add brand Category</Button>
+                <Button type="primary" onClick={() => { setVisible(true); setEditingBrandCategory(null); }}>Add Brand Category</Button>
                 <Input value={params.search} onChange={handleInputChange} className="w-[300px]" placeholder="Search..." />
-            </div>            <GlobalTable columns={columns} data={data} loading={loading}
+            </div>
+            <GlobalTable columns={columns} data={data} loading={loading}
                 pagination={{
                     current: params.page,
                     pageSize: params.limit,
@@ -147,19 +167,29 @@ const Index = () => {
                 handleChange={handleTableChange}
             />
             <Modal
-                title={editingBrand ? "Edit Brand Category" : "Add Brand Category"}
+                title={editingBrandCategory ? "Edit Brand Category" : "Add Brand Category"}
                 visible={visible}
                 onCancel={handleClose}
                 onOk={() => form.submit()}
             >
-                <Form form={form} onFinish={addOrUpdateBrand}>
-                    <Form.Item name="name" label="Category Name" rules={[{ required: true }]}>
+                <Form form={form} onFinish={addOrUpdateBrandCategory}>
+                    <Form.Item name="brand_id" label="Brand" rules={[{ required: true }]}>
+                        <Select placeholder="Select Brand">
+                            {brands.map((brand) => (
+                                <Select.Option key={brand.id} value={brand.id}>
+                                    {brand.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item name="brand_category_name" label="Brand Category name">
                         <Input />
                     </Form.Item>
                 </Form>
             </Modal>
         </div>
-    )
-}
+    );
+};
 
-export default Index;
+export default BrandCategory;

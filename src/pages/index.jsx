@@ -5,4 +5,5 @@ import Category from './category'
 import SubCategory from './sub-category'
 import Brand from './brand'
 import BrandCategory from './brand-category'
-export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand, BrandCategory }
+import NotFound from './not-found'
+export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand, BrandCategory, NotFound }
