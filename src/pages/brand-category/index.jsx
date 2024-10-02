@@ -1,18 +1,17 @@
 import { GlobalTable, GlobalDelete } from "@components";
-import { Space, Upload, Button, Modal, Form, Input, Select, message } from 'antd';
-import { EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { Space, Button, Modal, Form, Input, Select, message } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import brandCategory from "../../service/brand-category";
-import brandService from "../../service/brand"; // Brandlarni olish uchun import qilamiz
+import brandService from "../../service/brand"; 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const BrandCategory = () => {
+const Index = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [total, setTotal] = useState();
-    const [file, setFile] = useState({});
-    const [brands, setBrands] = useState([]); // Brandlar ro'yxatini saqlash uchun state
+    const [brands, setBrands] = useState([]); 
     const { search } = useLocation();
     const navigate = useNavigate();
     const [params, setParams] = useState({
@@ -38,27 +37,19 @@ const BrandCategory = () => {
 
     const getBrands = async () => {
         try {
-            const res = await brandService.get({ limit: 100, page: 1 }); // Brandlarni olish
-            setBrands(res?.data?.data?.brands || []); // Brandlar ro'yxatini saqlaymiz
+            const res = await brandService.get({ limit: 100, page: 1 }); 
+            setBrands(res?.data?.data?.brands || []);
         } catch (error) {
             console.log(error);
         }
     };
 
     const addOrUpdateBrandCategory = async (values) => {
-        let formData = new FormData();
-        if (file) {
-            formData.append("file", file);
-        }
-        formData.append("brand_id", values.brand_id);
-        formData.append("category_id", values.category_id);
-        formData.append("description", values.description);
-
         try {
             if (editingBrandCategory) {
-                await brandCategory.update(editingBrandCategory.id, formData);
+                await brandCategory.update(editingBrandCategory.id, values);
             } else {
-                await brandCategory.create(formData);
+                await brandCategory.create(values);
             }
             getData();
             handleClose();
@@ -89,7 +80,7 @@ const BrandCategory = () => {
 
     useEffect(() => {
         getData();
-        getBrands(); // Brandlarni yuklaymiz
+        getBrands(); 
     }, [params]);
 
     useEffect(() => {
@@ -134,9 +125,9 @@ const BrandCategory = () => {
             key: 'brand_id',
         },
         {
-            title: 'Brand category  name',
-            dataIndex: 'brand_category_name',
-            key: 'brand_category_name',
+            title: 'Brand category name',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Actions',
@@ -183,7 +174,7 @@ const BrandCategory = () => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item name="brand_category_name" label="Brand Category name">
+                    <Form.Item name="name" label="Brand Category name">
                         <Input />
                     </Form.Item>
                 </Form>
@@ -192,4 +183,4 @@ const BrandCategory = () => {
     );
 };
 
-export default BrandCategory;
+export default Index;
