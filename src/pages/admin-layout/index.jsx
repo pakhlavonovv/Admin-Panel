@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LogoutOutlined } from '@ant-design/icons';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   MenuFoldOutlined,
@@ -7,7 +8,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, theme, Divider, Space, Tooltip } from 'antd';
 import {admin} from '../../routes/routes'
 const { Header, Sider, Content } = Layout;
 const App = () => {
@@ -36,9 +37,11 @@ const App = () => {
         <Header
           style={{
             padding: 0,
-            background: colorBgContainer,
+            backgroundColor: colorBgContainer,
+            width: "100%"
           }}
           >
+            <div className='flex items-center justify-between w-[96%]'>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -49,6 +52,15 @@ const App = () => {
               height: 64,
             }}
             />
+            <Tooltip
+            title="Are you sure logout?"
+            color='red'
+            >
+            <NavLink to='/' className='text-[19px] h-full'>
+            <LogoutOutlined />
+            </NavLink>
+            </Tooltip>
+            </div>
         </Header>
         </div>
         <Content

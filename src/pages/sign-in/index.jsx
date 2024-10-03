@@ -1,5 +1,5 @@
 import SignInImage from './img/login.jpg'
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, Typography, notification, Space } from 'antd';
 import { NavLink } from 'react-router-dom';
 const { Title } = Typography;
 import { LockOutlined } from "@ant-design/icons";
@@ -8,6 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import auth from '../../service/auth';
 const Index = () => {
     const navigate = useNavigate()
+    const [api, contextHolder] = notification.useNotification();
+    const openNofication = (type) => {
+        api[type]({
+            message: "Something Wrong! Failed error",
+        });
+    }
     const onFinish = async(values) => {
         console.log('Success:', values);
 
@@ -17,13 +23,14 @@ const Index = () => {
             const access_token = resp.data?.data?.tokens?.access_token
             localStorage.setItem("access_token", access_token)
             navigate('/admin-layout/category')
-        }
+        } 
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
     return (
         <>
+        {contextHolder}
             <div className='flex items-center gap-[200px]'>
                 <div className="left">
                     <img className='w-full h-screen' src={SignInImage} alt="sign-in-image" />
@@ -63,7 +70,7 @@ const Index = () => {
 >
   <Input
     addonBefore="+998"
-    maxLength={9} // Faqat 9 ta raqam kiritilishi kerak
+    maxLength={9} 
     placeholder="Phone number"
   />
 </Form.Item>

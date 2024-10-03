@@ -40,9 +40,9 @@ const ProductPage = () => {
         }
     };
 
-    const getBrands = async () => {
+    const getBrands = async (id) => {
         try {
-            const res = await brandService.get({ limit: 100, page: 1 });
+            const res = await brandService.getCategoryById(id);
             setBrands(res?.data?.data?.brands || []);
         } catch (error) {
             console.log(error);
@@ -58,9 +58,9 @@ const ProductPage = () => {
         }
     };
 
-    const getBrandCategories = async () => {
+    const getBrandCategories = async (brandId) => {
         try {
-            const res = await brandCategoryService.get({ limit: 100, page: 1 });
+            const res = await brandCategoryService.getBrandByCategoryId(brandId);
             setBrandCategories(res?.data?.data?.brandCategories || []);
         } catch (error) {
             console.log(error);
@@ -69,9 +69,7 @@ const ProductPage = () => {
 
     useEffect(() => {
         getData();
-        getBrands();
         getCategories();
-        getBrandCategories();
     }, [params]);
 
    
@@ -85,7 +83,7 @@ const addOrUpdateProduct = async (values) => {
     formData.append("brand_category_id", values.brand_category_id);
 
     if (file) {
-        formData.append("image", file);
+        formData.append("files", file);
     }
 
     try {
@@ -126,6 +124,13 @@ const addOrUpdateProduct = async (values) => {
         const fileList = info.fileList;
         setFile(fileList[0]?.originFileObj || null);
     };
+    const handleChange = (evt, inputname) => {
+        getBrands(evt)
+        console.log(evt, inputname)
+    }
+    const handleBrandChange = (evt, inputname) => {
+        getBrandCategories(evt)
+    }
     const columns = [
         {
             title: 'Product Name',
@@ -200,7 +205,9 @@ const addOrUpdateProduct = async (values) => {
                         <Input />
                     </Form.Item>
                     <Form.Item name="category_id" label="Category" rules={[{ required: true }]}>
-                        <Select placeholder="Select Category">
+                        <Select placeholder="Select Category" onChange={(evt)=> {
+                            handleChange(evt, "Category_id")
+                        }}>
                             {categories.map((category) => (
                                 <Select.Option key={category.id} value={category.id}>
                                     {category.name}
@@ -209,7 +216,7 @@ const addOrUpdateProduct = async (values) => {
                         </Select>
                     </Form.Item>
                     <Form.Item name="brand_id" label="Brand" rules={[{ required: true }]}>
-                        <Select placeholder="Select Brand">
+                        <Select placeholder="Select Brand" onChange={(evt)=> handleBrandChange(evt, "Brand_id")}>
                             {brands.map((brand) => (
                                 <Select.Option key={brand.id} value={brand.id}>
                                     {brand.name}
