@@ -16,6 +16,14 @@ const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const removeToken = () => {
+    window.localStorage.removeItem('access_token')
+    window.localStorage.removeItem("first_name")
+    window.localStorage.removeItem("last_name")
+    window.localStorage.removeItem("phone_number")
+    window.localStorage.removeItem("email")
+    window.localStorage.removeItem("password")
+  }
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} className='min-h-[100vh]'>
@@ -56,7 +64,7 @@ const App = () => {
             title="Are you sure logout?"
             color='red'
             >
-            <NavLink to='/' className='text-[19px] h-full'>
+            <NavLink onClick={removeToken} to='/' className='text-[19px] h-full'>
             <LogoutOutlined />
             </NavLink>
             </Tooltip>

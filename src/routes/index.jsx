@@ -14,7 +14,8 @@ import {
    Brand,
    BrandCategory,
    NotFound,
-   Product
+   Product,
+   Settings
 } from "@pages";
 
 const Index = () => {
@@ -29,6 +30,7 @@ const Index = () => {
                <Route path="brand" element={<Brand/>}/>
                <Route path="brand-category" element={<BrandCategory/>}/>
                <Route path="product" element={<Product/>}/>
+               <Route path="settings" element={<Settings/>}/>
             </Route>
                <Route path="*" element={<NotFound/>}/>
          </Route> 

@@ -7,4 +7,5 @@ import Brand from './brand'
 import BrandCategory from './brand-category'
 import NotFound from './not-found'
 import Product from './product'
-export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand, BrandCategory, NotFound, Product }
+import Settings from './settings'
+export { SignIn, AdminLayout, SignUp, Category, SubCategory, Brand, BrandCategory, NotFound, Product, Settings }

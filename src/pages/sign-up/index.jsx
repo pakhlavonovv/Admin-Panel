@@ -13,6 +13,12 @@ export default function SignUpPage() {
   const navigate = useNavigate()
 
   const handleSubmit = async (values) => {
+    console.log(values)
+    window.localStorage.setItem("first_name", values.first_name)
+    window.localStorage.setItem("last_name", values.last_name)
+    window.localStorage.setItem("phone_number", values.phone_number)
+    window.localStorage.setItem("email", values.email)
+    window.localStorage.setItem("password", values.password)
     try {
       const response = await auth.sign_up({...values, phone_number:`998${values.phone_number}`});
       console.log(values, response)

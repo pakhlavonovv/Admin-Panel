@@ -1,10 +1,10 @@
 import { GlobalTable, GlobalDelete } from "@components";
 import { Space, Button, Modal, Form, Input, Select, Upload, message } from 'antd';
 import { UploadOutlined, EditOutlined } from '@ant-design/icons';
-import productService from "../../service/product"; 
-import brandService from "../../service/brand"; 
+import productService from "../../service/product";
+import brandService from "../../service/brand";
 import brandCategoryService from "../../service/brand-category";
-import categoryService from "../../service/category"; 
+import categoryService from "../../service/category";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -72,32 +72,32 @@ const ProductPage = () => {
         getCategories();
     }, [params]);
 
-   
-const addOrUpdateProduct = async (values) => {
-    const formData = new FormData();
-    
-    formData.append("name", values.name);
-    formData.append("price", values.price);
-    formData.append("category_id", values.category_id);
-    formData.append("brand_id", values.brand_id);
-    formData.append("brand_category_id", values.brand_category_id);
 
-    if (file) {
-        formData.append("files", file);
-    }
+    const addOrUpdateProduct = async (values) => {
+        const formData = new FormData();
 
-    try {
-        if (editingProduct) {
-            await productService.update(editingProduct.id, formData);
-        } else {
-            await productService.create(formData);
+        formData.append("name", values.name);
+        formData.append("price", values.price);
+        formData.append("category_id", values.category_id);
+        formData.append("brand_id", values.brand_id);
+        formData.append("brand_category_id", values.brand_category_id);
+
+        if (file) {
+            formData.append("files", file);
         }
-        getData();
-        handleClose();
-    } catch (error) {
-        console.log(error);
-    }
-};
+
+        try {
+            if (editingProduct) {
+                await productService.update(editingProduct.id, formData);
+            } else {
+                await productService.create(formData);
+            }
+            getData();
+            handleClose();
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
     const deleteProduct = async (id) => {
@@ -112,6 +112,13 @@ const addOrUpdateProduct = async (values) => {
 
     const editProduct = (product) => {
         setEditingProduct(product);
+        form.setFieldsValue({
+            name: product.name,
+            price: product.price,
+            category_id: product.category_id,
+            brand_id: product.brand_id,
+            brand_category_id: product.brand_category_id,
+        })
         setVisible(true);
     };
     const handleClose = () => {
@@ -205,7 +212,7 @@ const addOrUpdateProduct = async (values) => {
                         <Input />
                     </Form.Item>
                     <Form.Item name="category_id" label="Category" rules={[{ required: true }]}>
-                        <Select placeholder="Select Category" onChange={(evt)=> {
+                        <Select placeholder="Select Category" onChange={(evt) => {
                             handleChange(evt, "Category_id")
                         }}>
                             {categories.map((category) => (
@@ -216,7 +223,7 @@ const addOrUpdateProduct = async (values) => {
                         </Select>
                     </Form.Item>
                     <Form.Item name="brand_id" label="Brand" rules={[{ required: true }]}>
-                        <Select placeholder="Select Brand" onChange={(evt)=> handleBrandChange(evt, "Brand_id")}>
+                        <Select placeholder="Select Brand" onChange={(evt) => handleBrandChange(evt, "Brand_id")}>
                             {brands.map((brand) => (
                                 <Select.Option key={brand.id} value={brand.id}>
                                     {brand.name}

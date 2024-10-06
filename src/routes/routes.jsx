@@ -15,6 +15,10 @@ const admin = [
    {
       content: 'Product',
       path: '/admin-layout/product'
+   },
+   {
+      content: 'Settings',
+      path:'/admin-layout/settings'
    }
 ];
 
